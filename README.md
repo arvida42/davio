@@ -57,8 +57,6 @@ chmod +x ./cli.sh && ./cli.sh install
 
 ## Manual installation
 
-**You must have a Jackett instance installed for manual installation.**
-
 ```sh
 # Clone the repo
 git clone https://github.com/arvida42/davio.git
@@ -101,4 +99,4 @@ Davio is designed for selfhosted, whether for personal or public use. As a serve
 
 - **Addon ID** `ADDON_ID` Change the `id` field in stremio manifest
 - **Addon Name** `ADDON_NAME` Change the `name` field in stremio manifest
-- And mores ..., see all configurations in [config.js file](https://github.com/arvida42/jackettio/blob/main/src/lib/config.js).
+- And mores ..., see all configurations in [config.js file](https://github.com/arvida42/davio/blob/main/src/lib/config.js).
