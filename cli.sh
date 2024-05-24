@@ -14,7 +14,7 @@ if ! command -v curl >/dev/null 2>&1; then
 fi
 
 COMMAND="$1"
-RAW_GITHUB_URL="https://raw.githubusercontent.com/arvida42/davio/master"
+RAW_GITHUB_URL="https://raw.githubusercontent.com/arvida42/davio/main"
 DIR=$(dirname "$0")
 ENV_FILE="$DIR/.env.production"
 

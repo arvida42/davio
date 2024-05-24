@@ -30,7 +30,7 @@ Three automatic installation options are available using cli script:
 mkdir /home/davio && cd /home/davio
 
 # Download the cli script
-curl -fsSL https://raw.githubusercontent.com/arvida42/davio/master/cli.sh -o cli.sh
+curl -fsSL https://raw.githubusercontent.com/arvida42/davio/main/cli.sh -o cli.sh
 
 # Run the install
 chmod +x ./cli.sh && ./cli.sh install
@@ -101,4 +101,4 @@ Davio is designed for selfhosted, whether for personal or public use. As a serve
 
 - **Addon ID** `ADDON_ID` Change the `id` field in stremio manifest
 - **Addon Name** `ADDON_NAME` Change the `name` field in stremio manifest
-- And mores ..., see all configurations in [config.js file](https://github.com/arvida42/jackettio/blob/master/src/lib/config.js).
+- And mores ..., see all configurations in [config.js file](https://github.com/arvida42/jackettio/blob/main/src/lib/config.js).
