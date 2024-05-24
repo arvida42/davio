@@ -1,0 +1,23 @@
+version: "3.3"
+name: davio
+services:
+
+  davio:
+    image: arvida42/davio:latest
+    container_name: davio
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+      - DATA_FOLDER=/data
+    networks:
+      - davio
+    restart: unless-stopped
+    volumes:
+      - davio-data:/data
+    
+networks:
+  davio:
+
+volumes:
+  davio-data:

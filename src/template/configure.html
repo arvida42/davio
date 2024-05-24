@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Davio</title>
+    <link rel="icon" href="/icon">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+      .container {
+        max-width: 600px;
+      }
+      [v-cloak] { display: none; }
+    </style>
+  </head>
+  <body id="app">
+    <div class="container my-5" v-cloak>
+      <h1 class="mb-4">{{addon.name}} <span style="font-size:.6em">v{{addon.version}}</span></h1>
+      <form class="shadow p-3 bg-dark-subtle z-3 rounded">
+        <!-- welcome-message -->
+        <!-- <h5>WevDAV</h5> -->
+        <div class="mb-3">
+          <label>WebDAV provider</label>
+          <select v-model="dav" class="form-select" @change="form.davId = dav.id; form.name = dav.name">
+            <option v-for="option in davs" :value="option">{{ option.name }}</option>
+          </select>
+        </div>
+        <div v-for="field in dav.configFields" class="mb-3">
+          <label>{{field.label}}</label> 
+          <small v-if="field.href" class="ms-2"><a :href="field.href.value" target="_blank" rel="noreferrer">{{field.href.label}}</a></small>
+          <input type="{{field.type}}" v-model="field.value" class="form-control">
+          <small v-if="field.infos" class="text-muted">{{field.infos}}</small>
+        </div>
+        <div class="my-3 d-flex align-items-center">
+          <button @click="configure" type="button" class="btn btn-primary" :disabled="!dav.id">{{isUpdate ? 'Update' : 'Install'}}</button>
+          <div v-if="error" class="text-danger ms-2">{{error}}</div>
+          <div class="ms-auto">
+            <a v-if="manifestUrl" :href="manifestUrl">Stremio Link</a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script src="/js/vue.global.prod.js"></script>
+    <script type="text/javascript">/** import-config */</script>
+    <script type="text/javascript">
+      const { createApp, ref } = Vue
+      createApp({
+        setup() {
+
+          const {addon, davs, defaultUserConfig/*, immulatableUserConfigKeys*/} = config;
+
+          const dav = ref({});
+          const error = ref('');
+          const manifestUrl = ref('');
+          let isUpdate = false;
+
+          if(config.userConfig){
+            try {
+              const savedUserConfig = JSON.parse(atob(config.userConfig));
+              Object.assign(defaultUserConfig, savedUserConfig);
+              dav.value = davs.find(dav => dav.id == savedUserConfig.davId) || {};
+              dav.value.configFields.forEach(field => field.value = savedUserConfig[field.name] || null);
+              isUpdate = true;
+            }catch(err){}
+          }
+
+          const form = {
+            davId: '',
+            name: '',
+            shortName: '',
+            url: '',
+            username: '',
+            passowrd: '',
+            root: ''
+          };
+
+          async function configure(){
+            try {
+              error.value = '';
+              const userConfig = Object.assign({}, form, dav.value.fields);
+              dav.value.configFields.forEach(field => {
+                if(field.required && !field.value)throw new Error(`${field.label} is required`);
+                userConfig[field.name] = field.value
+              });
+              userConfig.name = dav.value.name;
+
+              if(!userConfig.davId){
+                throw new Error(`WebDAV is required`);
+              }
+
+              manifestUrl.value = `stremio://${document.location.host}/${btoa(JSON.stringify(userConfig))}/manifest.json`;
+              document.location.href = manifestUrl.value;
+            }catch(err){
+              error.value = err.message || err;
+            }
+          }
+
+          return {
+            addon,
+            davs,
+            dav,
+            form,
+            configure,
+            error,
+            manifestUrl,
+            isUpdate
+          }
+        }
+      }).mount('#app')
+    </script>
+  </body>
+</html>
