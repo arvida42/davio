@@ -1,6 +1,6 @@
 {
   "name": "davio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Webdav search on Stremio",
   "main": "src/index.js",
   "type": "module",
