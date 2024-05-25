@@ -111,7 +111,7 @@ export async function getStreams(userConfig, type, stremioId, publicUrl){
   console.log(`${stremioId} : ${userConfig.shortName} : ${files.length} total files fetched from (${new URL(userConfig.url).hostname}) in ${(new Date() - startDate) / 1000}s`);
   startDate = new Date();
 
-  const fuse = new Fuse(files, {keys: ['filename'], threshold: 0.3});
+  const fuse = new Fuse(files, {keys: ['filename', 'basename'], threshold: 0.3});
   files = type == 'series' ? fuse.search(metaInfos.name) : fuse.search(`${metaInfos.name} ${metaInfos.year}`);
   files = files.map(file => file.item);
 
