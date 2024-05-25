@@ -61,18 +61,19 @@
               Object.assign(defaultUserConfig, savedUserConfig);
               dav.value = davs.find(dav => dav.id == savedUserConfig.davId) || {};
               dav.value.configFields.forEach(field => field.value = savedUserConfig[field.name] || null);
+              defaultUserConfig.davId = dav.value.id;
               isUpdate = true;
             }catch(err){}
           }
 
           const form = {
-            davId: '',
-            name: '',
-            shortName: '',
-            url: '',
-            username: '',
-            passowrd: '',
-            root: ''
+            davId: defaultUserConfig.davId || '',
+            name: defaultUserConfig.name || '',
+            shortName: defaultUserConfig.shortName || '',
+            url: defaultUserConfig.url || '',
+            username: defaultUserConfig.username || '',
+            password: defaultUserConfig.password || '',
+            root: defaultUserConfig.root || ''
           };
 
           async function configure(){
