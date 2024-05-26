@@ -148,15 +148,8 @@ export async function getDownload(userConfig, type, stremioId, filename){
   const {id, season, episode} = parseStremioId(stremioId);
   filename = atob(filename);
 
-  let files = await getFiles(userConfig);
-  const file = files.find(f => f.filename == filename);
-
-  if(!file){
-    throw new Error(`Stream not found`);
-  }
-
   const client = getClient(userConfig);
-  const url = await client.getFileDownloadLink(file.filename);
+  const url = await client.getFileDownloadLink(filename);
 
   return url;
 
