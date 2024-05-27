@@ -1,7 +1,7 @@
 import {createHash} from 'crypto';
 import { createClient } from "webdav/web";
 import Fuse from 'fuse.js'
-import {parseWords, numberPad, bytesToSize, isVideo} from './util.js';
+import {parseWords, numberPad, bytesToSize, isVideo, wait} from './util.js';
 import config from './config.js';
 import cache from './cache.js';
 import * as meta from './meta.js';
