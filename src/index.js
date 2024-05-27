@@ -145,36 +145,6 @@ app.get("/stream/:type/:id.json", async(req, res) => {
 
 });
 
-app.get('/:userConfig/download/:type/:id/:torrentId', async(req, res) => {
-
-  try {
-
-    const url = await davio.getDownload(
-      Object.assign(JSON.parse(atob(req.params.userConfig)), {ip: req.clientIp}),
-      req.params.type, 
-      req.params.id, 
-      req.params.torrentId
-    );
-
-    const parsed = new URL(url);
-    const cut = (value) => value ?  `${value.substr(0, 10)}******${value.substr(-10)}` : '';
-    const auth = parsed.username && parsed.password ? '*******:******@' : '';
-    console.log(`${req.params.id} : Redirect: ${parsed.protocol}//${auth}${parsed.host}${cut(parsed.pathname)}${cut(parsed.search)}`);
-    
-    res.redirect(url);
-    res.end();
-
-  }catch(err){
-
-    console.log(req.params.id, err);
-
-    res.redirect(`/videos/error.mp4`);
-    res.end();
-
-  }
-
-});
-
 app.use((req, res) => {
   if (req.xhr) {
     res.status(404).send({ error: 'Page not found!' })

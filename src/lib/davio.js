@@ -42,13 +42,6 @@ function isEpisodeFile(file, season, episode){
     || file.basename.includes(`${numberPad(episode)}`);
 }
 
-function getClient(config){
-  return createClient(config.url, {
-    username: config.username,
-    password: config.password
-  });
-}
-
 async function getFilesRecursive(client, path){
   let files = [];
   try {
@@ -66,7 +59,7 @@ async function getFilesRecursive(client, path){
   return files;
 }
 
-async function getFiles(userConfig){
+async function getFiles(client, userConfig){
 
   const cacheKey = `davfiles:${userConfig.id}`;
 
@@ -80,8 +73,7 @@ async function getFiles(userConfig){
     let files = await cache.get(cacheKey);
 
     if(!files){
-      const client = getClient(userConfig);
-      files = await getFilesRecursive(getClient(userConfig), userConfig.root || '/');
+      files = await getFilesRecursive(client, userConfig.root || '/');
       files = files.filter(file => isVideo(file.filename));
       await cache.set(cacheKey, files, {ttl: 120});
     }
@@ -99,6 +91,11 @@ export async function getStreams(userConfig, type, stremioId, publicUrl){
   userConfig = await mergeDefaultUserConfig(userConfig);
   const {id, season, episode} = parseStremioId(stremioId);
 
+  const client = createClient(userConfig.url, {
+    username: userConfig.username,
+    password: userConfig.password
+  });
+
   let metaInfos = await getMetaInfos(type, stremioId);
 
   let files = [];
@@ -106,7 +103,7 @@ export async function getStreams(userConfig, type, stremioId, publicUrl){
 
   console.log(`${stremioId} : ${userConfig.shortName} : Searching files ...`);
 
-  files = await getFiles(userConfig);
+  files = await getFiles(client, userConfig);
 
   console.log(`${stremioId} : ${userConfig.shortName} : ${files.length} total files fetched from (${new URL(userConfig.url).hostname}) in ${(new Date() - startDate) / 1000}s`);
   startDate = new Date();
@@ -136,21 +133,8 @@ export async function getStreams(userConfig, type, stremioId, publicUrl){
     return {
       name: `[${userConfig.shortName}+] ${config.addonName} ${file.quality.label || ''}`,
       title: rows.join("\n"),
-      url: `${publicUrl}/${btoa(JSON.stringify(userConfig))}/download/${type}/${stremioId}/${btoa(file.filename)}`
+      url: client.getFileDownloadLink(file.filename)
     };
   });
-
-}
-
-export async function getDownload(userConfig, type, stremioId, filename){
-
-  userConfig = await mergeDefaultUserConfig(userConfig);
-  const {id, season, episode} = parseStremioId(stremioId);
-  filename = atob(filename);
-
-  const client = getClient(userConfig);
-  const url = await client.getFileDownloadLink(filename);
-
-  return url;
 
 }
